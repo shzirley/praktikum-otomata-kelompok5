@@ -41,8 +41,8 @@ py fsm_visual_gui.py
 
 ## Akses Laporan Tiap Soal
 
-- Laporan soal/praktikum 1: buka file `Laporan_Praktikum_Otomata_1.md`
-- Laporan soal/praktikum 2: buka file `Laporan_Praktikum_Otomata_2.md`
+- Laporan soal/praktikum 1: buka file [`Laporan_Praktikum_Otomata_1.md`](./Laporan_Praktikum_Otomata_1.md)
+- Laporan soal/praktikum 2: buka file [`Laporan_Praktikum_Otomata_2.md`](./Laporan_Praktikum_Otomata_2.md)
 
 Setiap laporan menjelaskan:
 - deskripsi tugas,
