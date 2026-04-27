@@ -239,3 +239,109 @@ f(x) = x^2 + 2*x + 1
 ```
 
 Blok kode ini berfungsi untuk membangun antarmuka pengguna (GUI) modern menggunakan library `customtkinter`. Di dalamnya diatur tata letak kotak input untuk kode sumber, area tampilan hasil klasifikasi, serta tombol interaktif untuk menjalankan proses analisis dan manajemen data token secara praktis.
+
+---
+
+## Cara Menjalankan
+
+Masuk ke folder `kode`, lalu jalankan:
+
+```bash
+python praktikum1.py
+```
+
+Jika Python di Windows terbaca sebagai `py`, bisa gunakan:
+
+```bash
+py praktikum1.py
+```
+
+---
+
+## Hasil Pengujian Singkat
+
+Input:
+```py
+int total = a + b * 3;
+if (total > 10) {
+    print(total);
+}
+f(x) = x^2 + 2*x + 1
+```
+
+Output:
+```
+1) Reserve Words
+  1. int
+  2. if
+  3. print
+
+2) Simbol & Tanda Baca
+  1. =
+  2. +
+  3. *
+  4. ;
+  5. (
+  6. >
+  7. )
+  8. {
+  9. (
+  10. )
+  11. ;
+  12. }
+  13. (
+  14. )
+  15. =
+  16. +
+  17. *
+  18. +
+
+3) Variabel (Identifier)
+  1. total
+  2. a
+  3. b
+  4. f
+  5. x
+
+4) Kalimat Matematika
+  1. total = a + b * 3
+  2. total > 10
+  3. f(x) = x^2 + 2*x + 1
+
+--- Semua Token Terbaca ---
+  1. int
+  2. total
+  3. =
+  4. a
+  5. +
+  6. b
+  7. *
+  8. 3
+  9. ;
+  10. if
+  11. (
+  12. total
+  13. >
+  14. 10
+  15. )
+  16. {
+  17. print
+  18. (
+  19. total
+  20. )
+  21. ;
+  22. }
+  23. f
+  24. (
+  25. x
+  26. )
+  27. =
+  28. x
+  29. 2
+  30. +
+  31. 2
+  32. *
+  33. x
+  34. +
+  35. 1
+```
