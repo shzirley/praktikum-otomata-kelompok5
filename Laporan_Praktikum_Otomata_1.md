@@ -253,23 +253,11 @@ Function ini berfungsi untuk:
 - **Pembersihan**: Menghapus komentar (// atau #) dari setiap baris agar tidak diproses sebagai kode.
 - **Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
 - **Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
-- **Output**: Mengembalikan daftar string (token) yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
+- **Output**: Mengembalikan daftar string token yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
+
+---
 
 ```python
-def tokenize_source(source_text: str):
-    cleaned_lines = []
-    for line in source_text.splitlines():
-        line = re.sub(r"//.*$", "", line)
-        line = re.sub(r"#.*$", "", line)
-        cleaned_lines.append(line)
-    cleaned_text = "\n".join(cleaned_lines)
-
-    tokens = re.findall(
-        r"==|!=|<=|>=|\+\+|--|\+=|-=|\*=|/=|&&|\|\||//|\*\*|[A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?|[+\-*/%=<>{}()[\];:,.]",
-        cleaned_text,
-    )
-    return tokens
-
 def classify_tokens(source_text: str):
     tokens = tokenize_source(source_text)
     reserved, symbols, variables = [], [], []
@@ -327,3 +315,18 @@ def classify_tokens(source_text: str):
         "expressions": expressions, "all_tokens": tokens,
     }
 ```
+
+Fungsi ini merupakan pusat logika yang mengorganisir hasil pindaian teks ke dalam kategori-kategori bermakna sesuai dengan tujuan praktikum. Berikut adalah penjelasan alur kerja:
+
+- Fungsi pertama kali memanggil `tokenize_source(source_text)` untuk memecah teks input menjadi daftar token mentah yang siap untuk diolah lebih lanjut.
+- Menyiapkan wadah berupa *list* untuk menampung hasil kategori *reserved*, *symbols*, *variables*, dan *expressions*, serta menggunakan *set* untuk memastikan tidak ada data duplikat dalam hasil akhir.
+- Melakukan pengecekan pada setiap token untuk menentukan apakah termasuk dalam `RESERVED_WORDS`, yang merupakan kata-kata kunci tetap yang memiliki fungsi khusus dalam bahasa pemrograman.
+- Mencocokkan setiap token dengan `SYMBOL_PATTERN` untuk mengidentifikasi operator aritmatika, operator logika, dan tanda baca seperti titik koma atau tanda kurung.
+- Memvalidasi token sebagai variabel menggunakan `IDENTIFIER_PATTERN` dengan memastikan token tersebut bukan merupakan kata kunci dan belum pernah terdeteksi sebelumnya.
+- Menyisir kembali kode sumber baris demi baris menggunakan `MATH_EXPRESSION_PATTERN` untuk mendeteksi kalimat matematika atau persamaan utuh.
+- Mendeteksi pernyataan kondisi menggunakan `CONDITION_STATEMENT_PATTERN` guna mengenali struktur logika yang terdapat di dalam perintah kontrol aliran seperti `if` atau `while`.
+- Mengidentifikasi ekspresi perbandingan melalui `COMPARISON_EXPRESSION_PATTERN` untuk membedah hubungan antara dua operand yang dihubungkan oleh operator relasional.
+- Melakukan normalisasi pada setiap ekspresi yang ditemukan agar format penulisannya seragam dan konsisten sebelum disimpan ke dalam daftar hasil.
+- Mengembalikan seluruh data yang telah terklasifikasi dalam bentuk *dictionary*, sehingga memudahkan bagian antarmuka (UI) untuk menampilkan setiap kelompok token secara terorganisir.
+
+---
