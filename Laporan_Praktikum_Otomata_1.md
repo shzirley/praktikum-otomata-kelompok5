@@ -330,3 +330,95 @@ Fungsi ini merupakan pusat logika yang mengorganisir hasil pindaian teks ke dala
 - Mengembalikan seluruh data yang telah terklasifikasi dalam bentuk *dictionary*, sehingga memudahkan bagian antarmuka (UI) untuk menampilkan setiap kelompok token secara terorganisir.
 
 ---
+
+```python
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+class ModernTokenizerApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Praktikum 1 - Program Tokenizer (Modern UI)")
+        self.geometry("1100x750")
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+
+        self.header_label = ctk.CTkLabel(
+            self, text="TOKEN CLASSIFIER PRO", 
+            font=ctk.CTkFont(size=22, weight="bold")
+        )
+        self.header_label.grid(row=0, column=0, pady=(20, 10))
+
+        self.pane = ctk.CTkFrame(self, fg_color="transparent")
+        self.pane.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
+        self.pane.grid_columnconfigure(0, weight=1)
+        self.pane.grid_columnconfigure(1, weight=1)
+        self.pane.grid_rowconfigure(1, weight=1)
+
+        ctk.CTkLabel(self.pane, text="Input Program:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", pady=(0,5))
+        self.input_text = ctk.CTkTextbox(self.pane, font=("Consolas", 13))
+        self.input_text.grid(row=1, column=0, sticky="nsew", padx=(0, 10))
+
+        ctk.CTkLabel(self.pane, text="Hasil Klasifikasi:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=1, sticky="w", pady=(0,5))
+        self.output_text = ctk.CTkTextbox(self.pane, font=("Consolas", 13), fg_color="#1E1E1E")
+        self.output_text.grid(row=1, column=1, sticky="nsew")
+
+        self.button_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.button_frame.grid(row=2, column=0, pady=20)
+
+        self.btn_analyze = ctk.CTkButton(self.button_frame, text="ANALYZE TOKENS", command=self.analyze, width=160, height=40, font=ctk.CTkFont(weight="bold"))
+        self.btn_analyze.pack(side="left", padx=10)
+
+        self.btn_sample = ctk.CTkButton(self.button_frame, text="LOAD SAMPLE", command=self.load_sample, width=160, height=40, fg_color="gray")
+        self.btn_sample.pack(side="left", padx=10)
+
+        self.btn_clear = ctk.CTkButton(self.button_frame, text="CLEAR", command=self.clear_all, width=160, height=40, fg_color="#D32F2F", hover_color="#B71C1C")
+        self.btn_clear.pack(side="left", padx=10)
+
+    def analyze(self):
+        source = self.input_text.get("1.0", "end").strip()
+        if not source:
+            self.update_output("Masukkan program terlebih dahulu.")
+            return
+
+        result = classify_tokens(source)
+        self.output_text.delete("1.0", "end")
+
+        self._append_section("1) Reserve Words", result["reserved"])
+        self._append_section("2) Simbol & Tanda Baca", result["symbols"])
+        self._append_section("3) Variabel (Identifier)", result["variables"])
+        self._append_section("4) Kalimat Matematika", result["expressions"])
+        self._append_section("--- Semua Token Terbaca ---", result["all_tokens"])
+
+    def _append_section(self, title, data):
+        self.output_text.insert("end", f"{title}\n", "header")
+        if data:
+            for idx, item in enumerate(data, start=1):
+                self.output_text.insert("end", f"  {idx}. {item}\n")
+        else:
+            self.output_text.insert("end", "  (Kosong)\n")
+        self.output_text.insert("end", "\n")
+
+    def update_output(self, message):
+        self.output_text.delete("1.0", "end")
+        self.output_text.insert("1.0", message)
+
+    def clear_all(self):
+        self.input_text.delete("1.0", "end")
+        self.output_text.delete("1.0", "end")
+
+    def load_sample(self):
+        sample_program = """
+        int total = a + b * 3;
+if (total > 10) {
+    print(total);
+}
+f(x) = x^2 + 2*x + 1
+"""
+        self.input_text.delete("1.0", "end")
+        self.input_text.insert("1.0", sample_program)
+        self.analyze()
+```
+
+Blok kode ini berfungsi untuk membangun antarmuka pengguna (GUI) modern menggunakan library `customtkinter`. Di dalamnya diatur tata letak kotak input untuk kode sumber, area tampilan hasil klasifikasi, serta tombol interaktif untuk menjalankan proses analisis dan manajemen data token secara praktis.
