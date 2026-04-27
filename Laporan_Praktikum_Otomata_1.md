@@ -2,10 +2,10 @@
 
 ## Soal
 Buatlah program computer yang dapat membaca inputan berupa program computer lain, dan dapat menghasilkan output berupa token-token (string-string yang terbaca) dan mengelompokkannya sesuai dengan sifat string tersebut:
-**- Reserve words
-- Simbol dan tanda baca
-- Variabel
-- Kalimat matematika (persamaan, fungsi, dsb)**
+- **Reserve words**
+- **Simbol dan tanda baca**
+- **Variabel**
+- **Kalimat matematika (persamaan, fungsi, dsb)**
 
 Rancanglah user interface sedemikian hingga pengguna dapat mudah menginputkan sebuah programyang akan dicari token2nya.
 
@@ -65,10 +65,12 @@ def tokenize_source(source_text: str):
     return tokens
 ```
 Function ini berfungsi untuk:
-- **Pembersihan**: Menghapus komentar (// atau #) dari setiap baris agar tidak diproses sebagai kode.
-- **Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
-- **Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
-- **Output**: Mengembalikan daftar string token yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
+- Memecah teks input menjadi baris-baris terpisah untuk memudahkan proses pembersihan komentar satu per satu.
+- Menghapus komentar yang diawali dengan simbol `//` atau `#` agar tidak dianggap sebagai bagian dari kode program yang valid.
+- Menggabungkan kembali baris-baris yang sudah bersih menjadi satu string utuh sebelum dilakukan ekstraksi token secara menyeluruh.
+- Menggunakan fungsi `re.findall` untuk mencari dan mengambil seluruh token seperti operator, angka, dan variabel berdasarkan pola regex yang ditentukan.
+- Memprioritaskan pengenalan operator majemuk (dua karakter) agar tidak salah terdeteksi sebagai dua simbol tunggal yang terpisah.
+- Menghasilkan daftar (list) berisi unit terkecil dari kode sumber yang siap digunakan untuk tahap klasifikasi kategori selanjutnya.
 
 ---
 
