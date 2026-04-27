@@ -199,3 +199,22 @@ if __name__ == "__main__":
     app = ModernTokenizerApp()
     app.mainloop()
 ```
+___
+
+## Penjelasan
+
+### Penjelasan Blok Definisi Aturan Sintaksis (Regex)
+
+[cite_start]Bagian ini mendefinisikan aturan-aturan dasar (*rules*) menggunakan Regular Expressions (Regex) untuk mengenali kategori token sesuai dengan teori otomata dan grammar[cite: 164, 201].
+
+| Variabel / Pola | Penjelasan | Dasar Teori Grammar |
+| :--- | :--- | :--- |
+| **`RESERVED_WORDS`** | [cite_start]Himpunan kata kunci tetap yang memiliki fungsi khusus (seperti `if`, `int`, `print`)[cite: 202]. | [cite_start]Merupakan bagian dari himpunan simbol terminal ($V_T$)[cite: 21, 111]. |
+| **`SYMBOL_PATTERN`** | [cite_start]Mendeteksi operator aritmatika, logika, dan tanda baca seperti `==`, `+`, atau `;`[cite: 203]. | [cite_start]Simbol terminal yang mendefinisikan struktur sintaksis[cite: 112]. |
+| **`IDENTIFIER_PATTERN`**| [cite_start]Aturan penamaan variabel: dimulai dengan huruf/garis bawah, diikuti alfanumerik[cite: 204]. | Mengikuti aturan derivasi identifier $I \rightarrow L \| IL \| [cite_start]ID$[cite: 36, 115]. |
+| **`MATH_EXPRESSION_PATTERN`** | [cite_start]Mendeteksi satu baris persamaan utuh (LHS = RHS) termasuk penugasan nilai[cite: 205]. | [cite_start]Implementasi aturan produksi $E, T, F$ untuk ekspresi matematis[cite: 83, 190]. |
+| **`CONDITION_STATEMENT_PATTERN`** | Mengenali struktur kontrol aliran program seperti `if` dan `while`. | [cite_start]Bagian dari aturan pembentukan kalimat (*sentences*) dalam grammar[cite: 125]. |
+| **`COMPARISON_EXPRESSION`** | Mendeteksi operasi perbandingan logika antara dua operand (seperti `a > b`). | [cite_start]Penggunaan operator relasional dalam evaluasi logika[cite: 104, 168]. |
+
+**Tujuan Implementasi:**
+Blok kode ini berfungsi sebagai "penerjemah" aturan grammar formal ke dalam logika program. [cite_start]Hal ini memungkinkan sistem untuk membedakan antara **token tunggal** (seperti variabel) dan **kalimat utuh** (seperti persamaan matematika) guna memenuhi kriteria penilaian kebenaran algoritma[cite: 73, 208].
