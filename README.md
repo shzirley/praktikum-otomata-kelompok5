@@ -6,6 +6,7 @@ Repository ini berisi kumpulan tugas Praktikum Otomata, termasuk kode program da
 
 - Maleka Ghaniya - 5025241189
 - Jorell Ramos Sinaga - 5025241202
+- Angela Vania Sugiyono - 5025241226
 
 ## Struktur Repository
 
