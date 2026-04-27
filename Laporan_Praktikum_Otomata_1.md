@@ -232,6 +232,8 @@ Bagian ini mendefinisikan aturan-aturan dasar menggunakan Regular Expressions (R
 
 Blok kode ini berfungsi sebagai "penerjemah" aturan grammar formal ke dalam logika program. Hal ini memungkinkan sistem untuk membedakan antara **token tunggal** (seperti variabel) dan **kalimat utuh** (seperti persamaan matematika) guna memenuhi kriteria penilaian kebenaran algoritma.
 
+---
+
 ```python
 def tokenize_source(source_text: str):
     cleaned_lines = []
