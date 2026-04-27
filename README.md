@@ -33,10 +33,19 @@ Contoh program untuk Praktikum 2 (FSM Visual GUI):
 python fsm_visual_gui.py
 ```
 
+Untuk Praktikum 1:
+```bash
+python praktikum1.py
+```
+
 Jika environment Windows menggunakan launcher Python:
 
 ```bash
 py fsm_visual_gui.py
+```
+
+```bash
+py praktikum1.py
 ```
 
 ## Akses Laporan Tiap Soal
