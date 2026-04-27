@@ -1,18 +1,7 @@
-# Laporan Praktikum #1
+import re
+import tkinter as tk
+import customtkinter as ctk
 
-## Soal
-Buatlah program computer yang dapat membaca inputan berupa program computer lain, dan dapat menghasilkan output berupa token-token (string-string yang terbaca) dan mengelompokkannya sesuai dengan sifat string tersebut:
-**- Reserve words
-- Simbol dan tanda baca
-- Variabel
-- Kalimat matematika (persamaan, fungsi, dsb)**
-
-Rancanglah user interface sedemikian hingga pengguna dapat mudah menginputkan sebuah programyang akan dicari token2nya.
-
-
-## Penjelasan Kode
-
-```python
 RESERVED_WORDS = {
     "if", "else", "for", "while", "do", "switch", "case", "break", 
     "continue", "return", "int", "float", "double", "char", "bool", 
@@ -33,23 +22,7 @@ RELATIONAL_OPERATOR_PATTERN = re.compile(r"(==|!=|<=|>=|<|>)")
 COMPARISON_EXPRESSION_PATTERN = re.compile(
     r"^\s*([A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?)\s*(==|!=|<=|>=|<|>)\s*([A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?)\s*;?\s*$"
 )
-```
-Bagian ini mendefinisikan aturan-aturan dasar menggunakan Regular Expressions (Regex) untuk mengenali kategori token sesuai dengan teori otomata dan grammar.
 
-| Variabel / Pola | Penjelasan | Dasar Teori Grammar |
-| :--- | :--- | :--- |
-| **`RESERVED_WORDS`** | Himpunan kata kunci tetap yang memiliki fungsi khusus (seperti `if`, `int`, `print`). | Merupakan bagian dari himpunan simbol terminal ($V_T$). |
-| **`SYMBOL_PATTERN`** | Mendeteksi operator aritmatika, logika, dan tanda baca seperti `==`, `+`, atau `;`. | Simbol terminal yang mendefinisikan struktur sintaksis. |
-| **`IDENTIFIER_PATTERN`**| Aturan penamaan variabel: dimulai dengan huruf/garis bawah, diikuti alfanumerik. | Mengikuti aturan derivasi identifier $I \rightarrow L \| IL \| ID$. |
-| **`MATH_EXPRESSION_PATTERN`** | Mendeteksi satu baris persamaan utuh (LHS = RHS) termasuk penugasan nilai. | Implementasi aturan produksi $E, T, F$ untuk ekspresi matematis. |
-| **`CONDITION_STATEMENT_PATTERN`** | Mengenali struktur kontrol aliran program seperti `if` dan `while`. | Bagian dari aturan pembentukan kalimat dalam grammar. |
-| **`COMPARISON_EXPRESSION`** | Mendeteksi operasi perbandingan logika antara dua operand (seperti `a > b`). | Penggunaan operator relasional dalam evaluasi logika. |
-
-Blok kode ini berfungsi sebagai "penerjemah" aturan grammar formal ke dalam logika program. Hal ini memungkinkan sistem untuk membedakan antara **token tunggal** (seperti variabel) dan **kalimat utuh** (seperti persamaan matematika) guna memenuhi kriteria penilaian kebenaran algoritma.
-
----
-
-```python
 def tokenize_source(source_text: str):
     cleaned_lines = []
     for line in source_text.splitlines():
@@ -63,16 +36,7 @@ def tokenize_source(source_text: str):
         cleaned_text,
     )
     return tokens
-```
-Function ini berfungsi untuk:
-- **Pembersihan**: Menghapus komentar (// atau #) dari setiap baris agar tidak diproses sebagai kode.
-- **Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
-- **Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
-- **Output**: Mengembalikan daftar string token yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
 
----
-
-```python
 def classify_tokens(source_text: str):
     tokens = tokenize_source(source_text)
     reserved, symbols, variables = [], [], []
@@ -129,24 +93,7 @@ def classify_tokens(source_text: str):
         "reserved": reserved, "symbols": symbols, "variables": variables,
         "expressions": expressions, "all_tokens": tokens,
     }
-```
 
-Fungsi ini merupakan pusat logika yang mengorganisir hasil pindaian teks ke dalam kategori-kategori bermakna sesuai dengan tujuan praktikum. Berikut adalah penjelasan alur kerja:
-
-- Fungsi pertama kali memanggil `tokenize_source(source_text)` untuk memecah teks input menjadi daftar token mentah yang siap untuk diolah lebih lanjut.
-- Menyiapkan wadah berupa *list* untuk menampung hasil kategori *reserved*, *symbols*, *variables*, dan *expressions*, serta menggunakan *set* untuk memastikan tidak ada data duplikat dalam hasil akhir.
-- Melakukan pengecekan pada setiap token untuk menentukan apakah termasuk dalam `RESERVED_WORDS`, yang merupakan kata-kata kunci tetap yang memiliki fungsi khusus dalam bahasa pemrograman.
-- Mencocokkan setiap token dengan `SYMBOL_PATTERN` untuk mengidentifikasi operator aritmatika, operator logika, dan tanda baca seperti titik koma atau tanda kurung.
-- Memvalidasi token sebagai variabel menggunakan `IDENTIFIER_PATTERN` dengan memastikan token tersebut bukan merupakan kata kunci dan belum pernah terdeteksi sebelumnya.
-- Menyisir kembali kode sumber baris demi baris menggunakan `MATH_EXPRESSION_PATTERN` untuk mendeteksi kalimat matematika atau persamaan utuh.
-- Mendeteksi pernyataan kondisi menggunakan `CONDITION_STATEMENT_PATTERN` guna mengenali struktur logika yang terdapat di dalam perintah kontrol aliran seperti `if` atau `while`.
-- Mengidentifikasi ekspresi perbandingan melalui `COMPARISON_EXPRESSION_PATTERN` untuk membedah hubungan antara dua operand yang dihubungkan oleh operator relasional.
-- Melakukan normalisasi pada setiap ekspresi yang ditemukan agar format penulisannya seragam dan konsisten sebelum disimpan ke dalam daftar hasil.
-- Mengembalikan seluruh data yang telah terklasifikasi dalam bentuk *dictionary*, sehingga memudahkan bagian antarmuka (UI) untuk menampilkan setiap kelompok token secara terorganisir.
-
----
-
-```python
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
@@ -234,6 +181,7 @@ f(x) = x^2 + 2*x + 1
         self.input_text.delete("1.0", "end")
         self.input_text.insert("1.0", sample_program)
         self.analyze()
-```
 
-Blok kode ini berfungsi untuk membangun antarmuka pengguna (GUI) modern menggunakan library `customtkinter`. Di dalamnya diatur tata letak kotak input untuk kode sumber, area tampilan hasil klasifikasi, serta tombol interaktif untuk menjalankan proses analisis dan manajemen data token secara praktis.
+if __name__ == "__main__":
+    app = ModernTokenizerApp()
+    app.mainloop()
