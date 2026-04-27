@@ -1,4 +1,6 @@
-# Kode
+#Laporan Praktikum #1
+
+## Kode
 
 ```python
 import re
