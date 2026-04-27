@@ -172,7 +172,7 @@ class ModernTokenizerApp(ctk.CTk):
 
     def load_sample(self):
         sample_program = """
-        int total = a + b * 3;
+int total = a + b * 3;
 if (total > 10) {
     print(total);
 }
