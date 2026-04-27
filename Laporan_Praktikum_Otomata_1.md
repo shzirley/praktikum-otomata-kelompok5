@@ -249,11 +249,11 @@ def tokenize_source(source_text: str):
     )
     return tokens
 ```
-
-**Pembersihan**: Menghapus komentar (// atau #) dari setiap baris agar tidak diproses sebagai kode.
-<br> **Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
-<br> **Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
-<br> **Output**: Mengembalikan daftar string (token) yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
+Function ini berfungsi untuk:
+- **Pembersihan**: Menghapus komentar (// atau #) dari setiap baris agar tidak diproses sebagai kode.
+- **Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
+- **Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
+- **Output**: Mengembalikan daftar string (token) yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
 
 ```python
 def tokenize_source(source_text: str):
