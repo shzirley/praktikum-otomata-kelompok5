@@ -249,6 +249,79 @@ def tokenize_source(source_text: str):
 ```
 
 **Pembersihan**: Menghapus komentar (// atau #) dari setiap baris agar tidak diproses sebagai kode.
-**Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
-**Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
-**Output**: Mengembalikan daftar string (token) yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
+<br> **Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
+<br> **Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
+<br> **Output**: Mengembalikan daftar string (token) yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
+
+```python
+def tokenize_source(source_text: str):
+    cleaned_lines = []
+    for line in source_text.splitlines():
+        line = re.sub(r"//.*$", "", line)
+        line = re.sub(r"#.*$", "", line)
+        cleaned_lines.append(line)
+    cleaned_text = "\n".join(cleaned_lines)
+
+    tokens = re.findall(
+        r"==|!=|<=|>=|\+\+|--|\+=|-=|\*=|/=|&&|\|\||//|\*\*|[A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?|[+\-*/%=<>{}()[\];:,.]",
+        cleaned_text,
+    )
+    return tokens
+
+def classify_tokens(source_text: str):
+    tokens = tokenize_source(source_text)
+    reserved, symbols, variables = [], [], []
+    variables_seen = set()
+    expressions, expressions_seen = [], set()
+
+    for token in tokens:
+        if token in RESERVED_WORDS:
+            reserved.append(token)
+        elif SYMBOL_PATTERN.match(token):
+            symbols.append(token)
+        elif IDENTIFIER_PATTERN.match(token):
+            if token not in RESERVED_WORDS and token not in variables_seen:
+                variables.append(token)
+                variables_seen.add(token)
+
+    for line in source_text.splitlines():
+        stripped = line.strip()
+        if not stripped: continue
+        
+        expression_match = MATH_EXPRESSION_PATTERN.match(stripped)
+        if expression_match:
+            declared_type = expression_match.group(1)
+            lhs_name = expression_match.group(2)
+            function_part = expression_match.group(3) or ""
+            rhs_expression = expression_match.group(4).strip()
+            if declared_type is None and lhs_name in RESERVED_WORDS: continue
+            normalized_expression = f"{lhs_name}{function_part} = {rhs_expression}"
+            if normalized_expression not in expressions_seen:
+                expressions.append(normalized_expression)
+                expressions_seen.add(normalized_expression)
+            continue
+
+        condition_match = CONDITION_STATEMENT_PATTERN.match(stripped)
+        if condition_match:
+            condition_expression = condition_match.group(2).strip()
+            if RELATIONAL_OPERATOR_PATTERN.search(condition_expression):
+                if condition_expression not in expressions_seen:
+                    expressions.append(condition_expression)
+                    expressions_seen.add(condition_expression)
+            continue
+
+        comparison_match = COMPARISON_EXPRESSION_PATTERN.match(stripped)
+        if comparison_match:
+            left_part = comparison_match.group(1)
+            operator_part = comparison_match.group(2)
+            right_part = comparison_match.group(3)
+            normalized_comparison = f"{left_part} {operator_part} {right_part}"
+            if normalized_comparison not in expressions_seen:
+                expressions.append(normalized_comparison)
+                expressions_seen.add(normalized_comparison)
+
+    return {
+        "reserved": reserved, "symbols": symbols, "variables": variables,
+        "expressions": expressions, "all_tokens": tokens,
+    }
+```
