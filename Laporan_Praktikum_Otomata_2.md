@@ -13,6 +13,7 @@ Komponen penilaian dari tugas ini adalah:
 FSM (Finite State Machine) adalah sebuah model matematika abstrak yang digunakan untuk merancang logika komputer atau program. Model ini hanya bisa berada di satu keadaan (state) pada satu waktu, dan dia akan berpindah ke keadaan lain jika menerima input (masukan) tertentu. 
 Syarat yang ada pada soal yaitu 
 $$L = { x ∈ (0 + 1)^+}$$ dan tidak memiliki substring 00. maka himpunan yang memenuhi L yaitu :
+
 L = { 1, 01, 101, 0101, 010101, ...}
 tidak diakhiri 0 dan tidak ada substring 00 pada himpunan. 
 
