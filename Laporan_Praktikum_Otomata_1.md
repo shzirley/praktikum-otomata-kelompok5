@@ -7,9 +7,6 @@ import re
 import tkinter as tk
 import customtkinter as ctk
 
-# ==========================================================
-# LOGIKA ORIGINAL KAMU (TIDAK DISENTUH SAMA SEKALI)
-# ==========================================================
 RESERVED_WORDS = {
     "if", "else", "for", "while", "do", "switch", "case", "break", 
     "continue", "return", "int", "float", "double", "char", "bool", 
@@ -122,24 +119,20 @@ class ModernTokenizerApp(ctk.CTk):
         )
         self.header_label.grid(row=0, column=0, pady=(20, 10))
 
-        # Main Split Container
         self.pane = ctk.CTkFrame(self, fg_color="transparent")
         self.pane.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
         self.pane.grid_columnconfigure(0, weight=1)
         self.pane.grid_columnconfigure(1, weight=1)
         self.pane.grid_rowconfigure(1, weight=1)
 
-        # --- Input Section ---
         ctk.CTkLabel(self.pane, text="Input Program:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", pady=(0,5))
         self.input_text = ctk.CTkTextbox(self.pane, font=("Consolas", 13))
         self.input_text.grid(row=1, column=0, sticky="nsew", padx=(0, 10))
 
-        # --- Output Section ---
         ctk.CTkLabel(self.pane, text="Hasil Klasifikasi:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=1, sticky="w", pady=(0,5))
         self.output_text = ctk.CTkTextbox(self.pane, font=("Consolas", 13), fg_color="#1E1E1E")
         self.output_text.grid(row=1, column=1, sticky="nsew")
 
-        # Button Group
         self.button_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.button_frame.grid(row=2, column=0, pady=20)
 
@@ -161,7 +154,6 @@ class ModernTokenizerApp(ctk.CTk):
         result = classify_tokens(source)
         self.output_text.delete("1.0", "end")
 
-        # Menampilkan hasil sesuai kategori tugas 
         self._append_section("1) Reserve Words", result["reserved"])
         self._append_section("2) Simbol & Tanda Baca", result["symbols"])
         self._append_section("3) Variabel (Identifier)", result["variables"])
@@ -186,11 +178,13 @@ class ModernTokenizerApp(ctk.CTk):
         self.output_text.delete("1.0", "end")
 
     def load_sample(self):
-        sample_program = """int total = a + b * 3;
+        sample_program = """
+        int total = a + b * 3;
 if (total > 10) {
     print(total);
 }
-f(x) = x^2 + 2*x + 1"""
+f(x) = x^2 + 2*x + 1
+"""
         self.input_text.delete("1.0", "end")
         self.input_text.insert("1.0", sample_program)
         self.analyze()
@@ -203,18 +197,58 @@ ___
 
 ## Penjelasan
 
-### Penjelasan Blok Definisi Aturan Sintaksis (Regex)
+```python
+RESERVED_WORDS = {
+    "if", "else", "for", "while", "do", "switch", "case", "break", 
+    "continue", "return", "int", "float", "double", "char", "bool", 
+    "void", "string", "class", "public", "private", "protected", 
+    "static", "import", "from", "def", "print", "function", "var", 
+    "let", "const", "true", "false", "null",
+}
 
-[cite_start]Bagian ini mendefinisikan aturan-aturan dasar (*rules*) menggunakan Regular Expressions (Regex) untuk mengenali kategori token sesuai dengan teori otomata dan grammar[cite: 164, 201].
+SYMBOL_PATTERN = re.compile(
+    r"(==|!=|<=|>=|\+\+|--|\+=|-=|\*=|/=|&&|\|\||//|\*\*|[+\-*/%=<>{}()[\];:,.])"
+)
+IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+MATH_EXPRESSION_PATTERN = re.compile(
+    r"^\s*(?:(int|float|double|char|bool|string|long|short)\s+)?([A-Za-z_][A-Za-z0-9_]*)(\([^)]*\))?\s*=\s*([A-Za-z0-9_().+\-*/%^,<>=!\s]+?)\s*;?\s*$"
+)
+CONDITION_STATEMENT_PATTERN = re.compile(r"^\s*(if|while)\s*\((.+)\)\s*[{;]?\s*$")
+RELATIONAL_OPERATOR_PATTERN = re.compile(r"(==|!=|<=|>=|<|>)")
+COMPARISON_EXPRESSION_PATTERN = re.compile(
+    r"^\s*([A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?)\s*(==|!=|<=|>=|<|>)\s*([A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?)\s*;?\s*$"
+)
+```
+Bagian ini mendefinisikan aturan-aturan dasar menggunakan Regular Expressions (Regex) untuk mengenali kategori token sesuai dengan teori otomata dan grammar.
 
 | Variabel / Pola | Penjelasan | Dasar Teori Grammar |
 | :--- | :--- | :--- |
-| **`RESERVED_WORDS`** | [cite_start]Himpunan kata kunci tetap yang memiliki fungsi khusus (seperti `if`, `int`, `print`)[cite: 202]. | [cite_start]Merupakan bagian dari himpunan simbol terminal ($V_T$)[cite: 21, 111]. |
-| **`SYMBOL_PATTERN`** | [cite_start]Mendeteksi operator aritmatika, logika, dan tanda baca seperti `==`, `+`, atau `;`[cite: 203]. | [cite_start]Simbol terminal yang mendefinisikan struktur sintaksis[cite: 112]. |
-| **`IDENTIFIER_PATTERN`**| [cite_start]Aturan penamaan variabel: dimulai dengan huruf/garis bawah, diikuti alfanumerik[cite: 204]. | Mengikuti aturan derivasi identifier $I \rightarrow L \| IL \| [cite_start]ID$[cite: 36, 115]. |
-| **`MATH_EXPRESSION_PATTERN`** | [cite_start]Mendeteksi satu baris persamaan utuh (LHS = RHS) termasuk penugasan nilai[cite: 205]. | [cite_start]Implementasi aturan produksi $E, T, F$ untuk ekspresi matematis[cite: 83, 190]. |
-| **`CONDITION_STATEMENT_PATTERN`** | Mengenali struktur kontrol aliran program seperti `if` dan `while`. | [cite_start]Bagian dari aturan pembentukan kalimat (*sentences*) dalam grammar[cite: 125]. |
-| **`COMPARISON_EXPRESSION`** | Mendeteksi operasi perbandingan logika antara dua operand (seperti `a > b`). | [cite_start]Penggunaan operator relasional dalam evaluasi logika[cite: 104, 168]. |
+| **`RESERVED_WORDS`** | Himpunan kata kunci tetap yang memiliki fungsi khusus (seperti `if`, `int`, `print`). | Merupakan bagian dari himpunan simbol terminal ($V_T$). |
+| **`SYMBOL_PATTERN`** | Mendeteksi operator aritmatika, logika, dan tanda baca seperti `==`, `+`, atau `;`. | Simbol terminal yang mendefinisikan struktur sintaksis. |
+| **`IDENTIFIER_PATTERN`**| Aturan penamaan variabel: dimulai dengan huruf/garis bawah, diikuti alfanumerik. | Mengikuti aturan derivasi identifier $I \rightarrow L \| IL \| ID$. |
+| **`MATH_EXPRESSION_PATTERN`** | Mendeteksi satu baris persamaan utuh (LHS = RHS) termasuk penugasan nilai. | Implementasi aturan produksi $E, T, F$ untuk ekspresi matematis. |
+| **`CONDITION_STATEMENT_PATTERN`** | Mengenali struktur kontrol aliran program seperti `if` dan `while`. | Bagian dari aturan pembentukan kalimat dalam grammar. |
+| **`COMPARISON_EXPRESSION`** | Mendeteksi operasi perbandingan logika antara dua operand (seperti `a > b`). | Penggunaan operator relasional dalam evaluasi logika. |
 
-**Tujuan Implementasi:**
-Blok kode ini berfungsi sebagai "penerjemah" aturan grammar formal ke dalam logika program. [cite_start]Hal ini memungkinkan sistem untuk membedakan antara **token tunggal** (seperti variabel) dan **kalimat utuh** (seperti persamaan matematika) guna memenuhi kriteria penilaian kebenaran algoritma[cite: 73, 208].
+Blok kode ini berfungsi sebagai "penerjemah" aturan grammar formal ke dalam logika program. Hal ini memungkinkan sistem untuk membedakan antara **token tunggal** (seperti variabel) dan **kalimat utuh** (seperti persamaan matematika) guna memenuhi kriteria penilaian kebenaran algoritma.
+
+```python
+def tokenize_source(source_text: str):
+    cleaned_lines = []
+    for line in source_text.splitlines():
+        line = re.sub(r"//.*$", "", line)
+        line = re.sub(r"#.*$", "", line)
+        cleaned_lines.append(line)
+    cleaned_text = "\n".join(cleaned_lines)
+
+    tokens = re.findall(
+        r"==|!=|<=|>=|\+\+|--|\+=|-=|\*=|/=|&&|\|\||//|\*\*|[A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?|[+\-*/%=<>{}()[\];:,.]",
+        cleaned_text,
+    )
+    return tokens
+```
+
+**Pembersihan**: Menghapus komentar (// atau #) dari setiap baris agar tidak diproses sebagai kode.
+**Ekstraksi**: Memecah teks menjadi unit-unit kecil (token) seperti variabel, angka, dan operator menggunakan pola Regex.
+**Prioritas**: Mencari operator panjang (seperti == atau !=) terlebih dahulu sebelum simbol tunggal agar pemotongan karakter akurat.
+**Output**: Mengembalikan daftar string (token) yang siap dikelompokkan ke kategori Reserve Words, Variables, atau Math Expressions.
